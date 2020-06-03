@@ -3,10 +3,6 @@ echo "---------- $0 start ----------"
 set -e
 set -x
 
-if [ $EUID == 0 ]; then
-    echo "Please do not run this script as root; don't sudo it!"
-    exit 1
-fi
 
 OPT="/opt"
 # Ardupilot Tools
@@ -29,7 +25,7 @@ while getopts "yq" opt; do
     esac
 done
 
-APT_GET="sudo apt-get"
+APT_GET=" apt-get"
 if $ASSUME_YES; then
     APT_GET="$APT_GET --assume-yes"
 fi
@@ -110,16 +106,16 @@ function install_arm_none_eabi_toolchain() {
         echo "Installing toolchain for STM32 Boards"
         echo "$sep"
         echo "Downloading from ArduPilot server"
-        sudo wget $ARM_TARBALL_URL
+         wget $ARM_TARBALL_URL
         echo "Installing..."
-        sudo tar xjf ${ARM_TARBALL}
+         tar xjf ${ARM_TARBALL}
         echo "... Cleaning"
-        sudo rm ${ARM_TARBALL};
+         rm ${ARM_TARBALL};
     )
   fi
   echo "Registering STM32 Toolchain for ccache"
-  sudo ln -s $CCACHE_PATH /usr/lib/ccache/arm-none-eabi-g++
-  sudo ln -s $CCACHE_PATH /usr/lib/ccache/arm-none-eabi-gcc
+   ln -s $CCACHE_PATH /usr/lib/ccache/arm-none-eabi-g++
+   ln -s $CCACHE_PATH /usr/lib/ccache/arm-none-eabi-gcc
   echo "Done!"
 }
 
@@ -138,17 +134,17 @@ function maybe_prompt_user() {
 
 # possibly grab a newer cmake for older ubuntu releases
 if [ ${RELEASE_CODENAME} == "precise" ]; then
-    sudo add-apt-repository ppa:george-edison55/precise-backports -y
+     add-apt-repository ppa:george-edison55/precise-backports -y
     $APT_GET update
 elif [ ${RELEASE_CODENAME} == "trusty" ]; then
-    sudo add-apt-repository ppa:george-edison55/cmake-3.x -y
+     add-apt-repository ppa:george-edison55/cmake-3.x -y
     $APT_GET update
 fi
 
 echo "$sep"
 echo "Add user to dialout group to allow managing serial ports"
 echo "$sep"
-sudo usermod -a -G dialout $USER
+ usermod -a -G dialout root
 echo "Done!"
 
 echo "$sep"
